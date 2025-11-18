@@ -1,6 +1,10 @@
 // /Web/js/ranking.js
 
-//캐러셀 관련 함수
+// 전역 변수로 설정 (state.js 없이 단독 동작)
+let currentRank = 0;
+let rankingSliderInterval = null;
+const RANKING_COUNT = 3;
+const AUTO_SLIDE_DELAY = 4000;
 
 function applyRankingLayout() {
     const slides = document.querySelectorAll('#ranking-track .ranking-slide');
@@ -9,7 +13,7 @@ function applyRankingLayout() {
 
     if (slides.length < RANKING_COUNT) return;
 
-    const center = appState.currentRank;
+    const center = currentRank;
     const left = (center - 1 + RANKING_COUNT) % RANKING_COUNT;
     const right = (center + 1) % RANKING_COUNT;
 
@@ -30,39 +34,39 @@ function initMainPageSlider() {
     const track = document.getElementById('ranking-track');
     if (!track) return;
 
-    if (appState.rankingSliderInterval) {
-        clearInterval(appState.rankingSliderInterval);
+    if (rankingSliderInterval) {
+        clearInterval(rankingSliderInterval);
     }
 
-    appState.currentRank = 0;
+    currentRank = 0;
     applyRankingLayout();
     startRankingSlider();
 }
 
 function nextRank() {
-    appState.currentRank = (appState.currentRank + 1) % RANKING_COUNT;
+    currentRank = (currentRank + 1) % RANKING_COUNT;
     applyRankingLayout();
     resetAutoSlide();
 }
 
 function prevRank() {
-    appState.currentRank = (appState.currentRank - 1 + RANKING_COUNT) % RANKING_COUNT;
+    currentRank = (currentRank - 1 + RANKING_COUNT) % RANKING_COUNT;
     applyRankingLayout();
     resetAutoSlide();
 }
 
 function showRankByDot(logicalIndex) {
     if (logicalIndex < 0 || logicalIndex >= RANKING_COUNT) return;
-    appState.currentRank = logicalIndex;
+    currentRank = logicalIndex;
     applyRankingLayout();
     resetAutoSlide();
 }
 
 function resetAutoSlide() {
-    if (appState.rankingSliderInterval) {
-        clearInterval(appState.rankingSliderInterval);
+    if (rankingSliderInterval) {
+        clearInterval(rankingSliderInterval);
     }
-    appState.rankingSliderInterval = setInterval(nextRank, AUTO_SLIDE_DELAY);
+    rankingSliderInterval = setInterval(nextRank, AUTO_SLIDE_DELAY);
 }
 
 function startRankingSlider() {
