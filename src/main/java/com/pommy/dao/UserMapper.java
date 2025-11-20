@@ -47,4 +47,12 @@ public interface UserMapper {
      * @return 삭제된 행 수
      */
     int delete(Long id);
+
+    /**
+     * 사용자명으로 사용자 조회 (로그인용)
+     * 
+     * @param username 사용자명
+     * @return 사용자 정보
+     */
+    User findByUsername(String username);
 }

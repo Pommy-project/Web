@@ -13,8 +13,9 @@
     <select id="findAll" resultType="User">
         SELECT 
             id,
-            name,
-            email,
+            username,
+            password,
+            nickname,
             created_at as createdAt,
             updated_at as updatedAt
         FROM users
@@ -25,26 +26,41 @@
     <select id="findById" parameterType="Long" resultType="User">
         SELECT 
             id,
-            name,
-            email,
+            username,
+            password,
+            nickname,
             created_at as createdAt,
             updated_at as updatedAt
         FROM users
         WHERE id = #{id}
     </select>
     
+    <!-- 사용자명으로 사용자 조회 (로그인용) -->
+    <select id="findByUsername" parameterType="String" resultType="User">
+        SELECT 
+            id,
+            username,
+            password,
+            nickname,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE username = #{username}
+    </select>
+    
     <!-- 사용자 추가 -->
     <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO users (name, email, created_at, updated_at)
-        VALUES (#{name}, #{email}, NOW(), NOW())
+        INSERT INTO users (username, password, nickname, created_at, updated_at)
+        VALUES (#{username}, #{password}, #{nickname}, NOW(), NOW())
     </insert>
     
     <!-- 사용자 정보 수정 -->
     <update id="update" parameterType="User">
         UPDATE users
         SET 
-            name = #{name},
-            email = #{email},
+            username = #{username},
+            password = #{password},
+            nickname = #{nickname},
             updated_at = NOW()
         WHERE id = #{id}
     </update>

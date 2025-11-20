@@ -1,7 +1,6 @@
 package com.pommy.controller;
 
 import java.io.IOException;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -32,14 +31,7 @@ public class UserController extends HttpServlet {
 
         String path = request.getPathInfo();
 
-        if (path == null || path.equals("/")) {
-            // 사용자 목록 조회
-            List<User> users = userService.getAllUsers();
-            request.setAttribute("users", users);
-            request.getRequestDispatcher("/WEB-INF/views/user/list.jsp")
-                    .forward(request, response);
-
-        } else if (path.equals("/detail")) {
+        if (path.equals("/detail")) {
             // 사용자 상세 조회
             String id = request.getParameter("id");
             if (id != null && !id.isEmpty()) {
@@ -59,13 +51,13 @@ public class UserController extends HttpServlet {
 
         if (path == null || path.equals("/")) {
             // 사용자 생성
-            String name = request.getParameter("name");
-            String email = request.getParameter("email");
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
+            String nickname = request.getParameter("nickname");
 
-            if (name != null && email != null && !name.isEmpty() && !email.isEmpty()) {
-                User user = new User();
-                user.setName(name);
-                user.setEmail(email);
+            if (username != null && password != null && nickname != null 
+                    && !username.isEmpty() && !password.isEmpty() && !nickname.isEmpty()) {
+                User user = new User(username, password, nickname);
                 userService.createUser(user);
             }
 

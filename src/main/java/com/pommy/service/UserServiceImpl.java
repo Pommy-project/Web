@@ -54,4 +54,12 @@ public class UserServiceImpl implements UserService {
             sqlSession.commit();
         }
     }
+
+    @Override
+    public User getUserByUsername(String username) {
+        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
+            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+            return mapper.findByUsername(username);
+        }
+    }
 }

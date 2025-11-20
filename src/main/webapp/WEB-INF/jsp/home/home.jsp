@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko">
 
-<%@ include file="./WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background min-h-screen flex flex-col">
 
@@ -14,7 +14,7 @@
     <div class="flex items-center gap-2">
         <img src="${pageContext.request.contextPath}/images/logo-horizontal.png" alt="Pommy Logo" class="h-8">
     </div>
-    <a href="main.jsp" class="flex items-center gap-2 bg-white text-gray-800 text-sm font-semibold py-2 px-4 rounded-full shadow hover:bg-gray-100 transition-colors">
+    <a href="${pageContext.request.contextPath}/prompt/main" class="flex items-center gap-2 bg-white text-gray-800 text-sm font-semibold py-2 px-4 rounded-full shadow hover:bg-gray-100 transition-colors">
         홈으로 이동 &rarr;
     </a>
 </header>
@@ -30,7 +30,7 @@
         </p>
     </div>
 
-    <form action="search.jsp" method="get" class="relative w-full max-w-xl mt-4 animate-fade-in" style="animation-delay: 0.2s;">
+    <form action="${pageContext.request.contextPath}/prompt/search" method="get" class="relative w-full max-w-xl mt-4 animate-fade-in" style="animation-delay: 0.2s;">
         <input type="search" name="q" placeholder="재미있는 프롬프트 밈을 검색해보세요!"
                class="w-full pl-12 pr-4 py-3 rounded-full shadow-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-main bg-white/90">
         <button type="submit" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-point">
@@ -39,7 +39,7 @@
     </form>
 </main>
 
-<%@ include file="./WEB-INF/jspf/footer.jspf" %>
+<%@ include file="../../jspf/footer.jspf" %>
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -55,3 +55,4 @@
 
 </body>
 </html>
+

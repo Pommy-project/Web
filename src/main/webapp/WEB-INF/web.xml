@@ -29,16 +29,16 @@
     <!-- 에러 페이지 설정 -->
     <error-page>
         <error-code>404</error-code>
-        <location>/WEB-INF/views/error/404.jsp</location>
+        <location>/WEB-INF/jsp/error/404.jsp</location>
     </error-page>
     <error-page>
         <error-code>500</error-code>
-        <location>/WEB-INF/views/error/500.jsp</location>
+        <location>/WEB-INF/jsp/error/500.jsp</location>
     </error-page>
 
     <!-- 웰컴 파일 설정 -->
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index</welcome-file>
     </welcome-file-list>
 
 </web-app>

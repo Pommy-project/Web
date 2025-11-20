@@ -4,8 +4,8 @@
   "http://mybatis.org/dtd/mybatis-3-config.dtd">
 
 <configuration>
-    <!-- 설정 파일 로드 (클래스패스에서 찾음) -->
-    <properties resource="WEB-INF/db.properties"/>
+    <!-- 설정 파일 로드 -->
+    <properties resource="db.properties"/>
     
     <!-- 설정 -->
     <settings>
@@ -56,9 +56,8 @@
     
     <!-- Mapper 파일 설정 -->
     <mappers>
-        <!-- XML Mapper 파일 경로 (WEB-INF/mappers/ 폴더 기준) -->
-        <mapper resource="WEB-INF/mappers/UserMapper.xml"/>
-        <!-- 패키지 단위로 매퍼 스캔 (인터페이스만 있는 경우) -->
-        <!-- <package name="com.pommy.dao"/> -->
+        <!-- XML Mapper 파일 경로 -->
+        <mapper resource="mappers/UserMapper.xml"/>
+        <mapper resource="mappers/PromptMemeMapper.xml"/>
     </mappers>
 </configuration>

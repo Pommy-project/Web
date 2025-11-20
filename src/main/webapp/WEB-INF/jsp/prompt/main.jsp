@@ -77,20 +77,20 @@
 <!DOCTYPE html>
 <html lang="ko">
 
-<%@ include file="./WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
     <div class="max-w-5xl mx-auto px-6 min-h-screen relative">
         
         <header class="flex items-center py-4 relative z-20">
-            <a href="index.jsp">
+            <a href="${pageContext.request.contextPath}/">
                 <img src="${pageContext.request.contextPath}/images/logo-horizontal.png" alt="Logo" class="h-8">
             </a>
-            <%@ include file="./WEB-INF/jspf/nav.jspf" %>
+            <%@ include file="../../jspf/nav.jspf" %>
         </header>
 
         <div id="header-search-popover" class="hidden absolute right-0 top-16 z-50 bg-white/95 border border-main/40 rounded-xl shadow-lg px-4 py-3">
-            <form action="search.jsp" method="get" class="flex items-center gap-2">
+            <form action="${pageContext.request.contextPath}/prompt/search" method="get" class="flex items-center gap-2">
                 <input id="header-search-input" type="search" name="q" placeholder="검색어를 입력하세요" class="w-52 px-3 py-2 text-sm border border-gray-300 rounded-lg">
                 <button type="submit" class="text-sm font-semibold text-white bg-point px-3 py-2 rounded-lg">검색</button>
                 <button type="button" onclick="toggleHeaderSearch()" class="text-gray-400">✕</button>
@@ -105,7 +105,7 @@
                     <div id="ranking-track">
                         
                         <div class="ranking-slide slide-center">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='detail.jsp?id=1'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=1'">
                                 <div class="relative">
                                     <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/FFD572/FFF8E1?text=Ranking+1" alt="1위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥇</span>
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="ranking-slide slide-right">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='detail.jsp?id=2'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=2'">
                                 <div class="relative">
                                     <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/CCCCCC/FFF8E1?text=Ranking+2" alt="2위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥈</span>
@@ -137,7 +137,7 @@
                         </div>
 
                         <div class="ranking-slide slide-left">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='detail.jsp?id=3'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=3'">
                                 <div class="relative">
                                     <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/B08D57/FFF8E1?text=Ranking+3" alt="3위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥉</span>
@@ -194,7 +194,7 @@
                             String randomColor = colors[(int)(id % colors.length)];
                 %>
                     <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-transform"
-                         onclick="location.href='detail.jsp?id=<%= id %>'">
+                         onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
                         
                         <div class="relative h-48 w-full">
                             <div class="w-full h-full <%= randomColor %> flex items-center justify-center text-4xl text-gray-400">
@@ -246,7 +246,7 @@
             </div>
         </section>
     </div>
-    <%@ include file="./WEB-INF/jspf/footer.jspf" %>
+    <%@ include file="../../jspf/footer.jspf" %>
     <script>document.addEventListener('DOMContentLoaded', function(){if(typeof initMainPageSlider==='function')initMainPageSlider();});</script>
 </body>
 </html>

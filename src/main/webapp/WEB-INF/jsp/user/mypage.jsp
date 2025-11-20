@@ -24,12 +24,12 @@
 %>
 <!DOCTYPE html>
 <html lang="ko">
-<%@ include file="/WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
     <div class="max-w-5xl mx-auto px-6 min-h-screen mt-24">
         
-        <button onclick="location.href='main.jsp'" class="text-sm text-gray-600 hover:text-point mb-4 inline-block transition-colors">
+        <button onclick="location.href='${pageContext.request.contextPath}/prompt/main'" class="text-sm text-gray-600 hover:text-point mb-4 inline-block transition-colors">
             &larr; 메인으로
         </button>
 
@@ -37,7 +37,7 @@
             <h1 class="text-3xl font-bold text-gray-800">
                 <span class="text-point"><%= myNickname %></span>님의 페이지
             </h1>
-            <button onclick="location.href='process/logout.jsp'"
+            <button onclick="location.href='${pageContext.request.contextPath}/auth/logout'"
                     class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow hover:bg-gray-400 transition-colors">
                 로그아웃
             </button>
@@ -57,7 +57,7 @@
                         String randomColor = colors[(int)(id % colors.length)];
                     %>
                         <div class="bg-white rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
-                             onclick="location.href='detail.jsp?id=<%= id %>'">
+                             onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
                             <div class="w-full h-48 <%= randomColor %> flex items-center justify-center text-4xl">
                                 👤
                             </div>
@@ -78,13 +78,13 @@
             <% } else { %>
                 <div class="bg-white p-10 rounded-xl shadow text-center">
                     <p class="text-gray-500 mb-4">아직 업로드한 프롬프트가 없습니다.</p>
-                    <a href="upload.jsp" class="bg-point text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">
+                    <a href="${pageContext.request.contextPath}/upload/form" class="bg-point text-white font-bold py-2 px-6 rounded-full hover:bg-opacity-90">
                         첫 프롬프트 올리기
                     </a>
                 </div>
             <% } %>
         </section>
     </div>
-    <%@ include file="./WEB-INF/jspf/footer.jspf" %>
+    <%@ include file="../../jspf/footer.jspf" %>
 </body>
 </html>

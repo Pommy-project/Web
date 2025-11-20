@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.pommy.dao.PromptMemeMapper">
+    
+    <!-- 모든 프롬프트밈 조회 (최신순) -->
+    <select id="findAll" resultType="PromptMeme">
+        SELECT 
+            id,
+            user_id as userId,
+            title,
+            description,
+            prompt_content as promptContent,
+            image_url as imageUrl,
+            sns_url as snsUrl,
+            ai_type as aiType,
+            view_count as viewCount,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM prompt_memes
+        ORDER BY created_at DESC
+    </select>
+    
+    <!-- ID로 프롬프트밈 조회 -->
+    <select id="findById" parameterType="Long" resultType="PromptMeme">
+        SELECT 
+            id,
+            user_id as userId,
+            title,
+            description,
+            prompt_content as promptContent,
+            image_url as imageUrl,
+            sns_url as snsUrl,
+            ai_type as aiType,
+            view_count as viewCount,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM prompt_memes
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 사용자 ID로 프롬프트밈 조회 -->
+    <select id="findByUserId" parameterType="Long" resultType="PromptMeme">
+        SELECT 
+            id,
+            user_id as userId,
+            title,
+            description,
+            prompt_content as promptContent,
+            image_url as imageUrl,
+            sns_url as snsUrl,
+            ai_type as aiType,
+            view_count as viewCount,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM prompt_memes
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+    
+    <!-- 제목으로 검색 -->
+    <select id="searchByTitle" parameterType="String" resultType="PromptMeme">
+        SELECT 
+            id,
+            user_id as userId,
+            title,
+            description,
+            prompt_content as promptContent,
+            image_url as imageUrl,
+            sns_url as snsUrl,
+            ai_type as aiType,
+            view_count as viewCount,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM prompt_memes
+        WHERE title LIKE CONCAT('%', #{keyword}, '%')
+           OR description LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY created_at DESC
+    </select>
+    
+    <!-- 조회수 상위 3개 조회 -->
+    <select id="findTop3ByViewCount" resultType="PromptMeme">
+        SELECT 
+            id,
+            user_id as userId,
+            title,
+            description,
+            prompt_content as promptContent,
+            image_url as imageUrl,
+            sns_url as snsUrl,
+            ai_type as aiType,
+            view_count as viewCount,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM prompt_memes
+        ORDER BY view_count DESC
+        LIMIT 3
+    </select>
+    
+    <!-- 프롬프트밈 추가 -->
+    <insert id="insert" parameterType="PromptMeme" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO prompt_memes (
+            user_id, 
+            title, 
+            description, 
+            prompt_content, 
+            image_url, 
+            sns_url, 
+            ai_type, 
+            view_count,
+            created_at, 
+            updated_at
+        )
+        VALUES (
+            #{userId}, 
+            #{title}, 
+            #{description}, 
+            #{promptContent}, 
+            #{imageUrl}, 
+            #{snsUrl}, 
+            #{aiType}, 
+            COALESCE(#{viewCount}, 0),
+            NOW(), 
+            NOW()
+        )
+    </insert>
+    
+    <!-- 프롬프트밈 수정 -->
+    <update id="update" parameterType="PromptMeme">
+        UPDATE prompt_memes
+        SET 
+            title = #{title},
+            description = #{description},
+            prompt_content = #{promptContent},
+            image_url = #{imageUrl},
+            sns_url = #{snsUrl},
+            ai_type = #{aiType},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 프롬프트밈 삭제 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM prompt_memes WHERE id = #{id}
+    </delete>
+    
+    <!-- 조회수 증가 -->
+    <update id="incrementViewCount" parameterType="Long">
+        UPDATE prompt_memes
+        SET view_count = view_count + 1
+        WHERE id = #{id}
+    </update>
+    
+</mapper>
+

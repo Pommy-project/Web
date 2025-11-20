@@ -8,14 +8,14 @@
 %>
 <!DOCTYPE html>
 <html lang="ko">
-<%@ include file="/WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
     <div class="max-w-2xl mx-auto mt-24 px-6 pb-10">
         <div class="bg-white p-8 rounded-xl shadow-lg space-y-6">
             <h1 class="text-3xl font-bold text-gray-800">새 프롬프트 업로드</h1>
             
-            <form action="process/uploadProcess.jsp" method="post" class="space-y-6">
+            <form action="${pageContext.request.contextPath}/upload" method="post" class="space-y-6">
                 <div>
                     <label for="upload-title" class="block text-sm font-medium text-gray-700">제목</label>
                     <input type="text" id="upload-title" name="title" placeholder="멋진 밈의 제목을 붙여주세요"
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="flex gap-4">
-                    <button type="button" onclick="location.href='main.jsp'"
+                    <button type="button" onclick="location.href='${pageContext.request.contextPath}/prompt/main'"
                             class="w-full bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded-md hover:bg-gray-300 transition-colors">
                         취소
                     </button>
@@ -74,6 +74,6 @@
             </form>
         </div>
     </div>
-    <%@ include file="/WEB-INF/jspf/footer.jspf" %>
+    <%@ include file="../../jspf/footer.jspf" %>
 </body>
 </html>

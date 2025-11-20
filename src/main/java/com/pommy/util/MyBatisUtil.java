@@ -16,8 +16,8 @@ public class MyBatisUtil {
     static {
         try {
             // MyBatis 설정 파일 경로 (클래스패스에서 찾음)
-            // WEB-INF 폴더의 파일은 클래스패스에 포함되므로 경로 지정 필요
-            String resource = "WEB-INF/mybatis-config.xml";
+            // resources 폴더의 파일은 클래스패스 루트에 있음
+            String resource = "mybatis-config.xml";
             InputStream inputStream = Resources.getResourceAsStream(resource);
             
             // SqlSessionFactory 생성
