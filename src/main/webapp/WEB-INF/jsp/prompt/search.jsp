@@ -26,12 +26,12 @@
 %>
 <!DOCTYPE html>
 <html lang="ko">
-<%@ include file="/WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
     <div class="max-w-5xl mx-auto px-6 mt-24 min-h-screen">
         
-        <button onclick="location.href='main.jsp'" class="text-sm text-gray-600 hover:text-point mb-4 inline-block transition-colors">
+        <button onclick="location.href='${pageContext.request.contextPath}/prompt/main'" class="text-sm text-gray-600 hover:text-point mb-4 inline-block transition-colors">
             &larr; 메인으로
         </button>
 
@@ -54,7 +54,7 @@
                         String randomColor = colors[(int)(id % colors.length)];
                     %>
                         <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-transform duration-300"
-                             onclick="location.href='detail.jsp?id=<%= id %>'">
+                             onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
                             <div class="w-full h-48 <%= randomColor %> flex items-center justify-center text-gray-400 text-4xl">
                                 🔍
                             </div>
@@ -84,6 +84,6 @@
             <% } %>
         </section>
     </div>
-    <%@ include file="/WEB-INF/jspf/footer.jspf" %>
+    <%@ include file="../../jspf/footer.jspf" %>
 </body>
 </html>

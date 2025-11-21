@@ -45,14 +45,14 @@
 %>
 <!DOCTYPE html>
 <html lang="ko">
-<%@ include file="/WEB-INF/jspf/header.jspf" %>
+<%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
     <div class="max-w-2xl mx-auto mt-24 px-6 pb-10">
         <div class="bg-white p-8 rounded-xl shadow-lg space-y-6">
             
             <div class="flex items-center justify-between">
-                <button onclick="location.href='main.jsp'" class="text-sm text-gray-600 hover:text-point transition-colors">
+                <button onclick="location.href='${pageContext.request.contextPath}/prompt/main'" class="text-sm text-gray-600 hover:text-point transition-colors">
                     &larr; 뒤로가기
                 </button>
 
@@ -128,6 +128,6 @@
             </div>
         </div>
     </div>
-    <%@ include file="/WEB-INF/jspf/footer.jspf" %>
+    <%@ include file="../../jspf/footer.jspf" %>
 </body>
 </html>

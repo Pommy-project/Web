@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 
+    UserMapper XML 파일
+    UserMapper 인터페이스와 연결됨
+-->
+<mapper namespace="com.pommy.dao.UserMapper">
+    
+    <!-- 모든 사용자 조회 -->
+    <select id="findAll" resultType="User">
+        SELECT 
+            id,
+            username,
+            password,
+            nickname,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        ORDER BY id DESC
+    </select>
+    
+    <!-- ID로 사용자 조회 -->
+    <select id="findById" parameterType="Long" resultType="User">
+        SELECT 
+            id,
+            username,
+            password,
+            nickname,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 사용자명으로 사용자 조회 (로그인용) -->
+    <select id="findByUsername" parameterType="String" resultType="User">
+        SELECT 
+            id,
+            username,
+            password,
+            nickname,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 사용자 추가 -->
+    <insert id="insert" parameterType="User" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO users (username, password, nickname, created_at, updated_at)
+        VALUES (#{username}, #{password}, #{nickname}, NOW(), NOW())
+    </insert>
+    
+    <!-- 사용자 정보 수정 -->
+    <update id="update" parameterType="User">
+        UPDATE users
+        SET 
+            username = #{username},
+            password = #{password},
+            nickname = #{nickname},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+    
+    <!-- 사용자 삭제 -->
+    <delete id="delete" parameterType="Long">
+        DELETE FROM users WHERE id = #{id}
+    </delete>
+    
+</mapper>
