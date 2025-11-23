@@ -1,25 +1,23 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*" %>
+<%@ page import="com.pommy.model.PromptMeme" %>
+<%@ page import="com.pommy.model.AIType" %>
 <%
-    // 1. 로그인 체크 및 닉네임 가져오기
+    // 로그인 체크
     if (session.getAttribute("nickname") == null) {
-        response.sendRedirect("login.jsp");
+        response.sendRedirect(request.getContextPath() + "/auth/login");
         return;
     }
-    String myNickname = (String) session.getAttribute("nickname");
-
-    // 2. 전체 게시글 가져오기
-    List<Map<String, Object>> allPosts = (List<Map<String, Object>>) application.getAttribute("globalPostList");
-    List<Map<String, Object>> myPosts = new ArrayList<>();
-
-    // 3. 필터링: 작성자(author)가 나(myNickname)와 같은 글만 골라냄
-    if (allPosts != null) {
-        for (Map<String, Object> post : allPosts) {
-            String author = (String) post.get("author");
-            if (author != null && author.equals(myNickname)) {
-                myPosts.add(post);
-            }
-        }
+    
+    // 컨트롤러에서 전달받은 데이터 사용
+    String myNickname = (String) request.getAttribute("myNickname");
+    List<PromptMeme> myPromptMemes = (List<PromptMeme>) request.getAttribute("myPromptMemes");
+    
+    if (myNickname == null) {
+        myNickname = (String) session.getAttribute("nickname");
+    }
+    if (myPromptMemes == null) {
+        myPromptMemes = new ArrayList<>();
     }
 %>
 <!DOCTYPE html>
@@ -44,33 +42,43 @@
         </div>
 
         <section>
-            <h2 class="text-2xl font-bold mb-4 text-gray-800">내가 올린 밈 (<%= myPosts.size() %>개)</h2>
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">내가 올린 밈 (<%= myPromptMemes.size() %>개)</h2>
             
-            <% if (!myPosts.isEmpty()) { %>
+            <% if (!myPromptMemes.isEmpty()) { %>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    <% for (Map<String, Object> post : myPosts) {
-                        Long id = (Long) post.get("id");
-                        String title = (String) post.get("title");
-                        String desc = (String) post.get("desc");
+                    <% for (PromptMeme meme : myPromptMemes) {
+                        if (meme == null) continue;
+                        Long id = meme.getId();
+                        String title = meme.getTitle() != null ? meme.getTitle() : "제목 없음";
+                        String desc = meme.getDescription();
+                        String imageUrl = meme.getImageUrl();
                         
+                        if (id == null) continue;
                         String[] colors = {"bg-red-100", "bg-blue-100", "bg-green-100", "bg-yellow-100", "bg-purple-100"};
                         String randomColor = colors[(int)(id % colors.length)];
                     %>
                         <div class="bg-white rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
                              onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
-                            <div class="w-full h-48 <%= randomColor %> flex items-center justify-center text-4xl">
-                                👤
-                            </div>
+                            <% if (imageUrl != null && !imageUrl.isEmpty()) { %>
+                                <img class="w-full h-48 object-cover" src="<%= imageUrl %>" alt="<%= title %>">
+                            <% } else { %>
+                                <div class="w-full h-48 <%= randomColor %> flex items-center justify-center text-4xl">
+                                    📷
+                                </div>
+                            <% } %>
                             <div class="p-4">
                                 <h3 class="font-bold text-lg"><%= title %></h3>
                                 <p class="text-sm text-gray-600">by <%= myNickname %></p>
                                 <p class="text-sm text-gray-500 mt-2 truncate">
                                     <%= (desc != null && !desc.isEmpty()) ? desc : "설명이 없습니다." %>
                                 </p>
-                                <button onclick="event.stopPropagation(); alert('DB 연결 후 삭제 가능합니다.');" 
-                                        class="mt-3 w-full bg-red-100 text-red-700 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition-colors">
-                                    삭제
-                                </button>
+                                <form method="post" action="${pageContext.request.contextPath}/prompt/delete" style="display: inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                                    <input type="hidden" name="id" value="<%= id %>">
+                                    <button type="submit" onclick="event.stopPropagation();" 
+                                            class="mt-3 w-full bg-red-100 text-red-700 font-semibold py-2 px-4 rounded-lg hover:bg-red-200 transition-colors">
+                                        삭제
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     <% } %>

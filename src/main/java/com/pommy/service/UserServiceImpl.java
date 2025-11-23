@@ -1,5 +1,6 @@
 package com.pommy.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.ibatis.session.SqlSession;
 import com.pommy.dao.UserMapper;
@@ -60,6 +61,17 @@ public class UserServiceImpl implements UserService {
         try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
             UserMapper mapper = sqlSession.getMapper(UserMapper.class);
             return mapper.findByUsername(username);
+        }
+    }
+
+    @Override
+    public List<User> getUsersByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        try (SqlSession sqlSession = MyBatisUtil.getSqlSessionFactory().openSession()) {
+            UserMapper mapper = sqlSession.getMapper(UserMapper.class);
+            return mapper.findByIds(ids);
         }
     }
 }

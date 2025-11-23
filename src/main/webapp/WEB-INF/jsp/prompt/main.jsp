@@ -1,78 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*" %>
+<%@ page import="com.pommy.model.PromptMeme" %>
+<%@ page import="com.pommy.model.AIType" %>
 <%
-    // 1. 서버 메모리에서 글 목록 가져오기
-    List<Map<String, Object>> postList = (List<Map<String, Object>>) application.getAttribute("globalPostList");
-
-    if (postList == null) {
-        postList = new ArrayList<>();
-        application.setAttribute("globalPostList", postList);
-    }
-
-    // 2. 랭킹 데이터(ID 1, 2, 3)가 존재하는지 확인하고, 없으면 강제로 추가
-    // (Lambda나 Stream을 쓰면 좋지만, JSP 호환성을 위해 기본 for문 사용)
-    boolean hasRank1 = false, hasRank2 = false, hasRank3 = false;
+    // 컨트롤러에서 전달받은 데이터 사용
+    List<PromptMeme> promptMemes = (List<PromptMeme>) request.getAttribute("promptMemes");
+    List<PromptMeme> top3PromptMemes = (List<PromptMeme>) request.getAttribute("top3PromptMemes");
+    Map<Long, String> userNicknameMap = (Map<Long, String>) request.getAttribute("userNicknameMap");
     
-    for (Map<String, Object> p : postList) {
-        Object idObj = p.get("id");
-        // Long 타입 안전하게 변환
-        long id = (idObj instanceof Long) ? (Long)idObj : ((Number)idObj).longValue();
-        
-        if (id == 1L) hasRank1 = true;
-        if (id == 2L) hasRank2 = true;
-        if (id == 3L) hasRank3 = true;
+    if (promptMemes == null) {
+        promptMemes = new ArrayList<>();
     }
-
-    // 랭킹 1위가 없으면 추가
-    if (!hasRank1) {
-        Map<String, Object> p1 = new HashMap<>();
-        p1.put("id", 1L);
-        p1.put("title", "우주 비행사 햄스터");
-        p1.put("author", "SpaceHam");
-        p1.put("desc", "용감한 햄스터가 우주를 여행합니다.");
-        p1.put("views", 1234);
-        p1.put("ais", Arrays.asList("Gemini", "Midjourney"));
-        p1.put("prompt", "A hamster in space suit...");
-        postList.add(p1);
+    if (top3PromptMemes == null) {
+        top3PromptMemes = new ArrayList<>();
     }
-    // 랭킹 2위가 없으면 추가
-    if (!hasRank2) {
-        Map<String, Object> p2 = new HashMap<>();
-        p2.put("id", 2L);
-        p2.put("title", "사이버펑크 고양이");
-        p2.put("author", "CatLover");
-        p2.put("desc", "네온 사인 아래의 고양이.");
-        p2.put("views", 982);
-        p2.put("ais", Arrays.asList("Midjourney"));
-        p2.put("prompt", "Cyberpunk cat...");
-        postList.add(p2);
+    if (userNicknameMap == null) {
+        userNicknameMap = new HashMap<>();
     }
-    // 랭킹 3위가 없으면 추가
-    if (!hasRank3) {
-        Map<String, Object> p3 = new HashMap<>();
-        p3.put("id", 3L);
-        p3.put("title", "중세 기사 댕댕이");
-        p3.put("author", "DogKnight");
-        p3.put("desc", "성지키는 강아지 기사.");
-        p3.put("views", 856);
-        p3.put("ais", Arrays.asList("DALL-E"));
-        p3.put("prompt", "A dog knight...");
-        postList.add(p3);
-    }
-
-    // 3. 화면에 뿌리기 위해 변수에 할당
-    Map<String, Object> rank1 = new HashMap<>();
-    Map<String, Object> rank2 = new HashMap<>();
-    Map<String, Object> rank3 = new HashMap<>();
-
-    for (Map<String, Object> p : postList) {
-        Object idObj = p.get("id");
-        long id = (idObj instanceof Long) ? (Long)idObj : ((Number)idObj).longValue();
-        
-        if (id == 1L) rank1 = p;
-        if (id == 2L) rank2 = p;
-        if (id == 3L) rank3 = p;
-    }
+    
+    // 랭킹 3개 (최대 3개)
+    PromptMeme rank1 = top3PromptMemes.size() > 0 ? top3PromptMemes.get(0) : null;
+    PromptMeme rank2 = top3PromptMemes.size() > 1 ? top3PromptMemes.get(1) : null;
+    PromptMeme rank3 = top3PromptMemes.size() > 2 ? top3PromptMemes.get(2) : null;
 %>
 <!DOCTYPE html>
 <html lang="ko">
@@ -80,6 +29,10 @@
 <%@ include file="../../jspf/header.jspf" %>
 
 <body class="bg-background">
+    <div id="splash-screen" class="fixed inset-0 bg-main flex items-center justify-center z-50 transition-opacity duration-500 ease-out">
+        <img src="${pageContext.request.contextPath}/images/logo-stacked.png" alt="Pommy Logo" class="w-48 animate-bounce-in">
+    </div>
+
     <div class="max-w-5xl mx-auto px-6 min-h-screen relative">
         
         <header class="flex items-center py-4 relative z-20">
@@ -104,53 +57,68 @@
                 <div class="overflow-visible rounded-xl">
                     <div id="ranking-track">
                         
+                        <% if (rank1 != null) { 
+                            String author1 = userNicknameMap.getOrDefault(rank1.getUserId(), "알 수 없음");
+                            String imageUrl1 = rank1.getImageUrl() != null ? rank1.getImageUrl() : "https://placehold.co/800x400/FFD572/FFF8E1?text=Ranking+1";
+                        %>
                         <div class="ranking-slide slide-center">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=1'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank1.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/FFD572/FFF8E1?text=Ranking+1" alt="1위">
+                                    <img class="w-full h-48 object-cover" src="<%= imageUrl1 %>" alt="1위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥇</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
-                                        조회수 <%= rank1.get("views") %>
+                                        조회수 <%= rank1.getViewCount() != null ? rank1.getViewCount() : 0 %>
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="font-bold text-xl"><%= rank1.get("title") %></h3>
-                                    <p class="text-sm text-gray-600">by <%= rank1.get("author") %></p>
+                                    <h3 class="font-bold text-xl"><%= rank1.getTitle() != null ? rank1.getTitle() : "제목 없음" %></h3>
+                                    <p class="text-sm text-gray-600">by <%= author1 %></p>
                                 </div>
                             </div>
                         </div>
+                        <% } %>
 
+                        <% if (rank2 != null) { 
+                            String author2 = userNicknameMap.getOrDefault(rank2.getUserId(), "알 수 없음");
+                            String imageUrl2 = rank2.getImageUrl() != null ? rank2.getImageUrl() : "https://placehold.co/800x400/CCCCCC/FFF8E1?text=Ranking+2";
+                        %>
                         <div class="ranking-slide slide-right">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=2'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank2.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/CCCCCC/FFF8E1?text=Ranking+2" alt="2위">
+                                    <img class="w-full h-48 object-cover" src="<%= imageUrl2 %>" alt="2위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥈</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
-                                        조회수 <%= rank2.get("views") %>
+                                        조회수 <%= rank2.getViewCount() != null ? rank2.getViewCount() : 0 %>
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg"><%= rank2.get("title") %></h3>
-                                    <p class="text-sm text-gray-600">by <%= rank2.get("author") %></p>
+                                    <h3 class="font-bold text-lg"><%= rank2.getTitle() != null ? rank2.getTitle() : "제목 없음" %></h3>
+                                    <p class="text-sm text-gray-600">by <%= author2 %></p>
                                 </div>
                             </div>
                         </div>
+                        <% } %>
 
+                        <% if (rank3 != null) { 
+                            String author3 = userNicknameMap.getOrDefault(rank3.getUserId(), "알 수 없음");
+                            String imageUrl3 = rank3.getImageUrl() != null ? rank3.getImageUrl() : "https://placehold.co/800x400/B08D57/FFF8E1?text=Ranking+3";
+                        %>
                         <div class="ranking-slide slide-left">
-                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=3'">
+                            <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank3.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="https://placehold.co/800x400/B08D57/FFF8E1?text=Ranking+3" alt="3위">
+                                    <img class="w-full h-48 object-cover" src="<%= imageUrl3 %>" alt="3위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥉</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
-                                        조회수 <%= rank3.get("views") %>
+                                        조회수 <%= rank3.getViewCount() != null ? rank3.getViewCount() : 0 %>
                                     </div>
                                 </div>
                                 <div class="p-4">
-                                    <h3 class="font-bold text-lg"><%= rank3.get("title") %></h3>
-                                    <p class="text-sm text-gray-600">by <%= rank3.get("author") %></p>
+                                    <h3 class="font-bold text-lg"><%= rank3.getTitle() != null ? rank3.getTitle() : "제목 없음" %></h3>
+                                    <p class="text-sm text-gray-600">by <%= author3 %></p>
                                 </div>
                             </div>
                         </div>
+                        <% } %>
                     </div>
                 </div>
                 <button onclick="prevRank()" class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white bg-opacity-70 p-2 rounded-full shadow-md z-10">◀</button>
@@ -168,18 +136,18 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 <%
-                    if (postList != null && !postList.isEmpty()) {
-                        for (Map<String, Object> post : postList) {
-                            String title = (String) post.get("title");
-                            String author = (String) post.get("author");
-                            String desc = (String) post.get("desc");
-                            List<String> aiList = (List<String>) post.get("ais");
-                            Long id = (Long) post.get("id");
+                    if (promptMemes != null && !promptMemes.isEmpty()) {
+                        for (PromptMeme meme : promptMemes) {
+                            if (meme == null) continue;
+                            String title = meme.getTitle() != null ? meme.getTitle() : "제목 없음";
+                            String author = userNicknameMap.getOrDefault(meme.getUserId(), "알 수 없음");
+                            String desc = meme.getDescription();
+                            List<AIType> aiTypes = meme.getAiTypes();
+                            Long id = meme.getId();
                             
-                            Object viewsObj = post.get("views");
-                            int views = (viewsObj != null) ? (Integer) viewsObj : 0;
+                            int views = meme.getViewCount() != null ? meme.getViewCount() : 0;
                             
-                            // ▼▼▼ [추가된 부분] 설명을 간단하게 줄이는 로직 ▼▼▼
+                            // 설명을 간단하게 줄이는 로직
                             String simpleDesc = "설명 없음";
                             if (desc != null && !desc.isEmpty()) {
                                 if (desc.length() > 12) {
@@ -188,18 +156,22 @@
                                     simpleDesc = desc;
                                 }
                             }
-                            // ▲▲▲
 
                             String[] colors = {"bg-red-100", "bg-blue-100", "bg-green-100", "bg-yellow-100", "bg-purple-100"};
                             String randomColor = colors[(int)(id % colors.length)];
+                            String imageUrl = meme.getImageUrl();
                 %>
                     <div class="bg-white rounded-xl shadow-md overflow-hidden cursor-pointer hover:scale-105 transition-transform"
                          onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
                         
                         <div class="relative h-48 w-full">
-                            <div class="w-full h-full <%= randomColor %> flex items-center justify-center text-4xl text-gray-400">
-                                📷
-                            </div>
+                            <% if (imageUrl != null && !imageUrl.isEmpty()) { %>
+                                <img class="w-full h-48 object-cover" src="<%= imageUrl %>" alt="<%= title %>">
+                            <% } else { %>
+                                <div class="w-full h-full <%= randomColor %> flex items-center justify-center text-4xl text-gray-400">
+                                    📷
+                                </div>
+                            <% } %>
                             <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full flex items-center gap-1">
                                 <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -218,14 +190,15 @@
                             
                             <div class="flex gap-2 mt-2 flex-wrap">
                                 <% 
-                                if(aiList != null) {
-                                    for (String ai : aiList) { 
+                                if(aiTypes != null && !aiTypes.isEmpty()) {
+                                    for (AIType ai : aiTypes) { 
                                         String colorClass = "bg-gray-200 text-gray-700";
-                                        if(ai.equals("Gemini")) colorClass = "bg-green-100 text-green-700";
-                                        else if(ai.equals("GPT")) colorClass = "bg-blue-100 text-blue-700";
-                                        else if(ai.equals("Sora")) colorClass = "bg-purple-100 text-purple-700";
+                                        if(ai == AIType.GEMINI) colorClass = "bg-green-100 text-green-700";
+                                        else if(ai == AIType.GPT) colorClass = "bg-blue-100 text-blue-700";
+                                        else if(ai == AIType.SORA) colorClass = "bg-purple-100 text-purple-700";
+                                        else if(ai == AIType.MIDJOURNEY) colorClass = "bg-gray-200 text-gray-700";
                                 %>
-                                    <span class="<%= colorClass %> text-xs px-2 py-0.5 rounded-full"><%= ai %></span>
+                                    <span class="<%= colorClass %> text-xs px-2 py-0.5 rounded-full"><%= ai.getValue() %></span>
                                 <% 
                                     } 
                                 }
@@ -247,6 +220,30 @@
         </section>
     </div>
     <%@ include file="../../jspf/footer.jspf" %>
-    <script>document.addEventListener('DOMContentLoaded', function(){if(typeof initMainPageSlider==='function')initMainPageSlider();});</script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            // Splash screen 처리
+            const splash = document.getElementById('splash-screen');
+            if (splash) {
+                // 새로고침인지 확인
+                const navigation = performance.getEntriesByType('navigation')[0];
+                const isReload = navigation && navigation.type === 'reload';
+                
+                // 새로고침이 아닌 경우 splash-screen 즉시 숨김
+                if (!isReload) {
+                    splash.style.display = 'none';
+                } else {
+                    // 새로고침인 경우 splash-screen 표시
+                    setTimeout(() => {
+                        splash.style.opacity = '0';
+                        setTimeout(() => { splash.style.display = 'none'; }, 500);
+                    }, 1500);
+                }
+            }
+            
+            // 랭킹 슬라이더 초기화
+            if(typeof initMainPageSlider==='function')initMainPageSlider();
+        });
+    </script>
 </body>
 </html>

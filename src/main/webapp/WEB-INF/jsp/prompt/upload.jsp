@@ -15,7 +15,7 @@
         <div class="bg-white p-8 rounded-xl shadow-lg space-y-6">
             <h1 class="text-3xl font-bold text-gray-800">새 프롬프트 업로드</h1>
             
-            <form action="${pageContext.request.contextPath}/upload" method="post" class="space-y-6">
+            <form action="${pageContext.request.contextPath}/upload" method="post" enctype="multipart/form-data" class="space-y-6">
                 <div>
                     <label for="upload-title" class="block text-sm font-medium text-gray-700">제목</label>
                     <input type="text" id="upload-title" name="title" placeholder="멋진 밈의 제목을 붙여주세요"
@@ -35,28 +35,32 @@
                 </div>
                 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700">미리보기 사진</label>
-                    <input type="file" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-main file:text-gray-800 hover:file:bg-opacity-90">
-                    <p class="text-xs text-gray-400 mt-1">* 현재 데모 버전에서는 실제 파일이 저장되지 않고 랜덤 썸네일로 대체됩니다.</p>
+                    <label for="upload-image" class="block text-sm font-medium text-gray-700">미리보기 사진</label>
+                    <input type="file" id="upload-image" name="image" accept="image/*" 
+                           class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-main file:text-gray-800 hover:file:bg-opacity-90">
+                    <p class="text-xs text-gray-400 mt-1">* JPG, PNG, GIF, WEBP 형식만 지원됩니다. (최대 10MB)</p>
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">사용 AI (여러 개 선택 가능)</label>
+                    <label for="upload-sns" class="block text-sm font-medium text-gray-700">SNS URL (선택)</label>
+                    <input type="url" id="upload-sns" name="snsUrl" placeholder="https://instagram.com/your-profile 또는 https://twitter.com/your-profile"
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-main focus:border-main">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">사용 AI</label>
                     <div class="flex flex-wrap gap-3">
                         <label class="cursor-pointer flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border hover:bg-gray-100">
-                            <input type="checkbox" name="ai" value="GPT" class="accent-point w-4 h-4"> <span>GPT</span>
+                            <input type="radio" name="ai" value="GPT" class="accent-point w-4 h-4"> <span>GPT</span>
                         </label>
                         <label class="cursor-pointer flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border hover:bg-gray-100">
-                            <input type="checkbox" name="ai" value="Gemini" class="accent-point w-4 h-4"> <span>Gemini</span>
+                            <input type="radio" name="ai" value="GEMINI" class="accent-point w-4 h-4"> <span>Gemini</span>
                         </label>
                         <label class="cursor-pointer flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border hover:bg-gray-100">
-                            <input type="checkbox" name="ai" value="Midjourney" class="accent-point w-4 h-4"> <span>Midjourney</span>
+                            <input type="radio" name="ai" value="MIDJOURNEY" class="accent-point w-4 h-4"> <span>Midjourney</span>
                         </label>
                         <label class="cursor-pointer flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border hover:bg-gray-100">
-                            <input type="checkbox" name="ai" value="Sora" class="accent-point w-4 h-4"> <span>Sora</span>
-                        </label>
-                        <label class="cursor-pointer flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg border hover:bg-gray-100">
-                            <input type="checkbox" name="ai" value="DALL-E" class="accent-point w-4 h-4"> <span>DALL-E</span>
+                            <input type="radio" name="ai" value="SORA" class="accent-point w-4 h-4"> <span>Sora</span>
                         </label>
                     </div>
                 </div>

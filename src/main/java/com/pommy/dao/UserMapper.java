@@ -55,4 +55,12 @@ public interface UserMapper {
      * @return 사용자 정보
      */
     User findByUsername(String username);
+
+    /**
+     * 여러 ID로 사용자 조회 (성능 최적화용)
+     * 
+     * @param ids 사용자 ID 목록
+     * @return 사용자 목록
+     */
+    List<User> findByIds(List<Long> ids);
 }

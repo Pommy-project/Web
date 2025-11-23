@@ -1,6 +1,10 @@
 package com.pommy.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * PromptMeme 엔티티 클래스
@@ -96,6 +100,33 @@ public class PromptMeme {
     
     public void setAiType(String aiType) {
         this.aiType = aiType;
+    }
+    
+    /**
+     * AIType Enum 리스트로 변환
+     * @return AIType 리스트
+     */
+    public List<AIType> getAiTypes() {
+        if (aiType == null || aiType.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        return Arrays.stream(aiType.split(","))
+                .map(String::trim)
+                .map(AIType::fromValue)
+                .filter(type -> type != null)
+                .collect(Collectors.toList());
+    }
+    
+    /**
+     * 단일 AIType Enum 설정
+     * @param aiType AIType Enum
+     */
+    public void setAiTypeEnum(AIType aiType) {
+        if (aiType == null) {
+            this.aiType = null;
+        } else {
+            this.aiType = aiType.getValue();
+        }
     }
     
     public Integer getViewCount() {

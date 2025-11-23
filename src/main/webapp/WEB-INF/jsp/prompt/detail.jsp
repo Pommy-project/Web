@@ -1,46 +1,35 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.util.*" %>
+<%@ page import="com.pommy.model.PromptMeme" %>
+<%@ page import="com.pommy.model.AIType" %>
+<%@ page import="com.pommy.service.UserService" %>
+<%@ page import="com.pommy.service.UserServiceImpl" %>
 <%
-    String idStr = request.getParameter("id");
+    // 컨트롤러에서 전달받은 데이터 사용
+    PromptMeme promptMeme = (PromptMeme) request.getAttribute("promptMeme");
     
-    // 기본값
     String title = "정보 없음";
     String author = "Unknown";
     String desc = "삭제되었거나 존재하지 않는 게시물입니다.";
     String prompt = "";
-    List<String> aiList = new ArrayList<>();
+    String snsUrl = null;
+    String imageUrl = null;
+    List<AIType> aiTypes = new ArrayList<>();
     int currentViews = 0;
-    
-    List<Map<String, Object>> postList = (List<Map<String, Object>>) application.getAttribute("globalPostList");
     boolean isFound = false;
-
-    if (idStr != null && postList != null) {
-        try {
-            long targetId = Long.parseLong(idStr);
-            for (Map<String, Object> post : postList) {
-                Object idObj = post.get("id");
-                long postId = (idObj instanceof Long) ? (Long)idObj : ((Number)idObj).longValue();
-                
-                if (postId == targetId) {
-                    // 데이터 매핑
-                    title = (String) post.get("title");
-                    author = (String) post.get("author");
-                    desc = (String) post.get("desc");
-                    prompt = (String) post.get("prompt");
-                    aiList = (List<String>) post.get("ais");
-                    
-                    // 조회수 증가 로직
-                    Object vObj = post.get("views");
-                    int v = (vObj != null) ? (Integer) vObj : 0;
-                    v++; 
-                    post.put("views", v); // 증가된 값 저장
-                    currentViews = v;     // 화면 표시용 변수 업데이트
-                    
-                    isFound = true;
-                    break;
-                }
-            }
-        } catch (Exception e) {}
+    
+    UserService userService = new UserServiceImpl();
+    
+    if (promptMeme != null) {
+        isFound = true;
+        title = promptMeme.getTitle();
+        author = userService.getUserById(promptMeme.getUserId()).getNickname();
+        desc = promptMeme.getDescription();
+        prompt = promptMeme.getPromptContent();
+        snsUrl = promptMeme.getSnsUrl();
+        imageUrl = promptMeme.getImageUrl();
+        aiTypes = promptMeme.getAiTypes();
+        currentViews = promptMeme.getViewCount() != null ? promptMeme.getViewCount() : 0;
     }
 %>
 <!DOCTYPE html>
@@ -74,13 +63,11 @@
 
             <div>
                 <h2 class="text-xl font-bold mb-2">미리보기</h2>
-                <% if (isFound) { %>
+                <% if (isFound && imageUrl != null && !imageUrl.isEmpty()) { %>
+                    <img class="w-full h-64 object-cover rounded-lg shadow-md" src="<%= imageUrl %>" alt="<%= title %>">
+                <% } else { %>
                     <div class="w-full h-64 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg shadow-md flex items-center justify-center text-4xl text-gray-400">
                         📷
-                    </div>
-                <% } else { %>
-                    <div class="w-full h-64 bg-gray-200 rounded-lg shadow-md flex items-center justify-center text-gray-500">
-                        이미지 없음
                     </div>
                 <% } %>
             </div>
@@ -99,17 +86,25 @@
                 <h2 class="text-xl font-bold mb-2">사용된 AI</h2>
                 <div class="flex gap-3 flex-wrap">
                     <% 
-                    if (aiList != null && !aiList.isEmpty()) {
-                        for (String ai : aiList) {
+                    if (aiTypes != null && !aiTypes.isEmpty()) {
+                        for (AIType ai : aiTypes) {
                             String colorClass = "bg-gray-200 text-gray-700";
-                            if (ai.equals("Gemini")) colorClass = "bg-green-100 text-green-700";
-                            else if (ai.equals("GPT")) colorClass = "bg-blue-100 text-blue-700";
-                            else if (ai.equals("Midjourney")) colorClass = "bg-gray-200 text-gray-700";
-                            else if (ai.equals("Sora")) colorClass = "bg-purple-100 text-purple-700";
+                            String aiName = ai.getValue();
+                            String aiLink = ai.getUrl(); // Enum에서 URL 가져오기
+                            
+                            if (ai == AIType.GEMINI) {
+                                colorClass = "bg-green-100 text-green-700";
+                            } else if (ai == AIType.GPT) {
+                                colorClass = "bg-blue-100 text-blue-700";
+                            } else if (ai == AIType.MIDJOURNEY) {
+                                colorClass = "bg-gray-200 text-gray-700";
+                            } else if (ai == AIType.SORA) {
+                                colorClass = "bg-purple-100 text-purple-700";
+                            }
                     %>
-                        <span class="<%= colorClass %> font-semibold py-2 px-4 rounded-lg">
-                            <%= ai %>
-                        </span>
+                        <a href="<%= aiLink %>" target="_blank" class="<%= colorClass %> font-semibold py-2 px-4 rounded-lg hover:opacity-80 transition-opacity">
+                            <%= aiName %>
+                        </a>
                     <% 
                         }
                     } else {
@@ -122,8 +117,13 @@
             <div>
                 <h2 class="text-xl font-bold mb-2">SNS / 출처</h2>
                 <div class="flex gap-3 flex-wrap">
-                    <button class="bg-pink-100 text-pink-700 font-semibold py-2 px-4 rounded-lg hover:bg-pink-200">Instagram</button>
-                    <button class="bg-blue-100 text-blue-700 font-semibold py-2 px-4 rounded-lg hover:bg-blue-200">Twitter</button>
+                    <% if (snsUrl != null && !snsUrl.isEmpty()) { %>
+                        <a href="<%= snsUrl %>" target="_blank" class="bg-pink-100 text-pink-700 font-semibold py-2 px-4 rounded-lg hover:bg-pink-200 transition-colors">
+                            SNS 링크 이동
+                        </a>
+                    <% } else { %>
+                        <span class="text-gray-500">SNS 링크가 없습니다.</span>
+                    <% } %>
                 </div>
             </div>
         </div>

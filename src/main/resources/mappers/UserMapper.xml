@@ -70,4 +70,20 @@
         DELETE FROM users WHERE id = #{id}
     </delete>
     
+    <!-- 여러 ID로 사용자 조회 (성능 최적화용) -->
+    <select id="findByIds" parameterType="java.util.List" resultType="User">
+        SELECT 
+            id,
+            username,
+            password,
+            nickname,
+            created_at as createdAt,
+            updated_at as updatedAt
+        FROM users
+        WHERE id IN
+        <foreach collection="list" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    
 </mapper>

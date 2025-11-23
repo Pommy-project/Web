@@ -35,31 +35,39 @@ public class MypageController extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
+        try {
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("userId") == null) {
+                response.sendRedirect(request.getContextPath() + "/auth/login");
+                return;
+            }
+
+            Long userId = (Long) session.getAttribute("userId");
+            String nickname = (String) session.getAttribute("nickname");
+
+            // 사용자 정보 조회
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                response.sendError(HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
+                return;
+            }
+
+            // 사용자가 작성한 프롬프트 밈 조회
+            List<PromptMeme> myPromptMemes = promptMemeService.getPromptMemesByUserId(userId);
+            if (myPromptMemes == null) {
+                myPromptMemes = new java.util.ArrayList<>();
+            }
+
+            request.setAttribute("user", user);
+            request.setAttribute("myNickname", nickname != null ? nickname : user.getNickname());
+            request.setAttribute("myPromptMemes", myPromptMemes);
+
+            request.getRequestDispatcher("/WEB-INF/jsp/user/mypage.jsp")
+                    .forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "서버 오류가 발생했습니다: " + e.getMessage());
         }
-
-        Long userId = (Long) session.getAttribute("userId");
-        String nickname = (String) session.getAttribute("nickname");
-
-        // 사용자 정보 조회
-        User user = userService.getUserById(userId);
-        if (user == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "사용자를 찾을 수 없습니다.");
-            return;
-        }
-
-        // 사용자가 작성한 프롬프트 밈 조회
-        List<PromptMeme> myPromptMemes = promptMemeService.getPromptMemesByUserId(userId);
-
-        request.setAttribute("user", user);
-        request.setAttribute("myNickname", nickname);
-        request.setAttribute("myPromptMemes", myPromptMemes);
-
-        request.getRequestDispatcher("/WEB-INF/jsp/user/mypage.jsp")
-                .forward(request, response);
     }
 }
 
