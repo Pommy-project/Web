@@ -1,7 +1,9 @@
 -- pommy 데이터베이스의 테이블 생성 스크립트
 -- 프롬프트밈 공유 플랫폼
 
--- 데이터베이스 선택
+
+-- 데이터베이스 생성 및 선택
+CREATE DATABASE IF NOT EXISTS pommy CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE pommy;
 
 -- ============================================
