@@ -79,7 +79,18 @@
 
             <div>
                 <h2 class="text-xl font-bold mb-2">프롬프트</h2>
-                <pre class="bg-gray-100 p-4 rounded-md text-sm text-gray-800 overflow-x-auto whitespace-pre-wrap"><%= prompt %></pre>
+                <div class="relative">
+                    <pre id="prompt-content" class="bg-gray-100 p-4 rounded-md text-sm text-gray-800 overflow-x-auto whitespace-pre-wrap"><%= prompt %></pre>
+                    <button 
+                        id="copy-prompt-btn" 
+                        onclick="copyPromptToClipboard()" 
+                        class="absolute top-2 right-2 p-2 bg-white rounded-md shadow-sm hover:bg-gray-50 transition-all cursor-pointer text-gray-600 hover:text-gray-800"
+                        title="프롬프트 복사">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
+                            <path d="M360-240q-33 0-56.5-23.5T280-320v-480q0-33 23.5-56.5T360-880h360q33 0 56.5 23.5T800-800v480q0 33-23.5 56.5T720-240H360Zm0-80h360v-480H360v480ZM200-80q-33 0-56.5-23.5T120-160v-560h80v560h440v80H200Zm160-240v-480 480Z"/>
+                        </svg>
+                    </button>
+                </div>
             </div>
 
             <div>
@@ -129,5 +140,6 @@
         </div>
     </div>
     <%@ include file="../../jspf/footer.jspf" %>
+    <script src="${pageContext.request.contextPath}/js/clipboard.js"></script>
 </body>
 </html>
