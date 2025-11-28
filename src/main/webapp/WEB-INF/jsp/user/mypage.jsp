@@ -66,7 +66,7 @@
                         <div class="bg-white rounded-xl shadow-md overflow-hidden hover:scale-105 transition-transform duration-300"
                              onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= id %>'">
                             <% if (imageUrl != null && !imageUrl.isEmpty()) { %>
-                                <img class="w-full h-48 object-cover" src="<%= imageUrl %>" alt="<%= title %>">
+                                <img class="w-full h-48 object-cover"  src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl %>" alt="<%= title %>">
                             <% } else { %>
                                 <div class="w-full h-48 <%= randomColor %> flex items-center justify-center text-4xl">
                                     📷

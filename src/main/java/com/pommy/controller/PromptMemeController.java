@@ -358,13 +358,18 @@ public class PromptMemeController extends HttpServlet {
 
                     // 이미지 파일만 허용
                     if (extension.matches("jpg|jpeg|png|gif|webp")) {
+                        // [변경 1] 저장 경로를 프로젝트 소스 폴더의 절대 경로로 설정
+                        String uploadDir = new File("src/main/webapp/uploads").getAbsolutePath();
+
                         // 기존 이미지 파일 삭제 (있는 경우)
                         String oldImageUrl = promptMeme.getImageUrl();
                         if (oldImageUrl != null && !oldImageUrl.isEmpty()) {
                             try {
                                 String oldFileName = oldImageUrl.substring(oldImageUrl.lastIndexOf('/') + 1);
-                                String uploadDir = getServletContext().getRealPath("/uploads");
+
+                                // [변경 2] 위에서 만든 절대 경로(uploadDir)를 사용하여 삭제할 파일 찾기
                                 File oldFile = new File(uploadDir, oldFileName);
+
                                 if (oldFile.exists()) {
                                     oldFile.delete();
                                 }
@@ -374,8 +379,7 @@ public class PromptMemeController extends HttpServlet {
                             }
                         }
 
-                        // 업로드 디렉토리 설정
-                        String uploadDir = getServletContext().getRealPath("/uploads");
+                        // 폴더가 없으면 생성
                         File uploadDirFile = new File(uploadDir);
                         if (!uploadDirFile.exists()) {
                             uploadDirFile.mkdirs();
@@ -385,9 +389,11 @@ public class PromptMemeController extends HttpServlet {
                         String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
                         String filePath = uploadDir + File.separator + uniqueFileName;
 
-                        // 파일 저장
+                        // [변경 3] 설정한 경로에 파일 저장
                         filePart.write(filePath);
-                        promptMeme.setImageUrl(request.getContextPath() + "/uploads/" + uniqueFileName);
+
+                        // DB에는 웹 접근 경로(/uploads/...)로 저장
+                        promptMeme.setImageUrl(uniqueFileName);
                     } else {
                         errors.add("이미지 파일은 JPG, PNG, GIF, WEBP 형식만 지원됩니다.");
                     }

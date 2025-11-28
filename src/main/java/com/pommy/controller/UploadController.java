@@ -152,22 +152,51 @@ public class UploadController extends HttpServlet {
                 return null;
             }
 
-            // 업로드 디렉토리 설정
-            String uploadDir = getServletContext().getRealPath("/uploads");
-            File uploadDirFile = new File(uploadDir);
+
+            // ⭐ FileServeController에서 사용한 동일한 방식 적용
+            // 1) UploadController.class 파일의 실제 위치 찾기
+            String classPath = UploadController.class
+                    .getProtectionDomain()
+                    .getCodeSource()
+                    .getLocation()
+                    .getPath();
+
+            File classFile = new File(classPath);
+
+            // 2) 프로젝트 root로 역추적 (4단계 상위 폴더)
+            File projectRoot = classFile.getParentFile()  // /WEB-INF/classes
+                    .getParentFile()                    // /WEB-INF
+                    .getParentFile()                    // /pommy_war_exploded
+                    .getParentFile();                   // Tomcat의 webapps/pommy_war_exploded (실제 WAR 위치)
+
+            // 3) 개발용 프로젝트 root로 맞추기 (src/main/webapp/uploads)
+            // ⚠️ 만약 exploded 환경일 때도 동일하게 맞추고 싶으면 아래처럼 src 기준으로 맞춤
+            File uploadDirFile = new File(projectRoot.getAbsolutePath() + "/src/main/webapp/uploads");
+
+            // 4) 폴더 없으면 생성
             if (!uploadDirFile.exists()) {
                 uploadDirFile.mkdirs();
             }
 
-            // 고유한 파일명 생성
-            String uniqueFileName = UUID.randomUUID().toString() + "." + extension;
-            String filePath = uploadDir + File.separator + uniqueFileName;
+            // 고유 파일명 생성
+            String uniqueFileName = java.util.UUID.randomUUID().toString() + "." + extension;
+            File savedFile = new File(uploadDirFile, uniqueFileName);
 
-            // 파일 저장
-            filePart.write(filePath);
-            return request.getContextPath() + "/uploads/" + uniqueFileName;
+            // 저장
+            filePart.write(savedFile.getAbsolutePath());
+
+            System.out.println("========================================");
+            System.out.println("[UploadController] 파일 업로드 완료");
+            System.out.println("원본 파일명 : " + fileName);
+            System.out.println("저장 위치   : " + savedFile.getAbsolutePath());
+            System.out.println("========================================");
+
+            // DB에는 파일명만 저장
+            return uniqueFileName;
+
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("[UploadController] 업로드 중 오류 발생: " + e.getMessage());
             return null;
         }
     }

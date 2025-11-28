@@ -52,28 +52,49 @@
                 <div>
                     <label for="image" class="block text-sm font-semibold text-gray-700 mb-2">미리보기 이미지</label>
                     <div class="space-y-3">
+                        <%
+                            // 기존 이미지 URL 가져오기
+                            String rawUrl = promptMeme.getImageUrl();
+                            String finalSrc = "";
+
+                            if (rawUrl == null || rawUrl.isEmpty()) {
+                                // 이미지 없음 → placeholder
+                                finalSrc = "https://placehold.co/600x400?text=No+Image";
+                            } else if (rawUrl.startsWith("http://") || rawUrl.startsWith("https://")) {
+                                // 외부 URL → 그대로 사용
+                                finalSrc = rawUrl;
+                            } else {
+                                // 내부 업로드 파일 → FileServeController로 서빙
+                                finalSrc = request.getContextPath() + "/file/image?name=" + rawUrl;
+                            }
+                        %>
+
                         <div id="image-preview-container" class="relative">
-                            <% if (promptMeme.getImageUrl() != null && !promptMeme.getImageUrl().isEmpty()) { %>
-                                <div class="relative w-full h-64 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
-                                    <img id="current-image" src="<%= promptMeme.getImageUrl() %>" alt="현재 이미지" 
-                                         class="w-full h-full object-cover">
-                                    <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity flex items-center justify-center">
-                                        <span class="text-white text-sm font-semibold opacity-0 hover:opacity-100 transition-opacity">현재 이미지</span>
-                                    </div>
+                            <% if (rawUrl != null && !rawUrl.isEmpty()) { %>
+                            <div class="relative w-full h-64 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
+                                <img id="current-image"
+                                     src="<%= finalSrc %>"
+                                     alt="현재 이미지"
+                                     class="w-full h-full object-cover">
+                                <div class="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity flex items-center justify-center">
+                                    <span class="text-white text-sm font-semibold opacity-0 hover:opacity-100 transition-opacity">현재 이미지</span>
                                 </div>
+                            </div>
                             <% } else { %>
-                                <div id="no-image-placeholder" class="w-full h-64 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
-                                    <div class="text-center text-gray-400">
-                                        <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                        </svg>
-                                        <p class="text-sm">이미지 없음</p>
-                                    </div>
+                            <div id="no-image-placeholder" class="w-full h-64 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center">
+                                <div class="text-center text-gray-400">
+                                    <svg class="w-16 h-16 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-sm">이미지 없음</p>
                                 </div>
+                            </div>
                             <% } %>
+
                             <div id="new-image-preview" class="hidden mt-3 relative w-full h-64 rounded-lg overflow-hidden border border-gray-200 bg-gray-50">
                                 <img id="preview-img" src="" alt="새 이미지 미리보기" class="w-full h-full object-cover">
-                                <button type="button" onclick="handleClearImagePreview()" 
+                                <button type="button" onclick="handleClearImagePreview()"
                                         class="absolute top-2 right-2 bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center hover:bg-red-600 transition">
                                     ✕
                                 </button>
@@ -82,6 +103,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div>
                             <input type="file" id="image" name="image" accept="image/jpeg,image/jpg,image/png,image/gif,image/webp" 
                                    onchange="handleImagePreview(this)"

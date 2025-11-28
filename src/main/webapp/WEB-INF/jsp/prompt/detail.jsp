@@ -64,7 +64,7 @@
             <div>
                 <h2 class="text-xl font-bold mb-2">미리보기</h2>
                 <% if (isFound && imageUrl != null && !imageUrl.isEmpty()) { %>
-                    <img class="w-full h-64 object-cover rounded-lg shadow-md" src="<%= imageUrl %>" alt="<%= title %>">
+                    <img class="w-full h-64 object-cover rounded-lg shadow-md"  src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl %>" alt="<%= title %>">
                 <% } else { %>
                     <div class="w-full h-64 bg-gradient-to-r from-yellow-100 to-orange-100 rounded-lg shadow-md flex items-center justify-center text-4xl text-gray-400">
                         📷

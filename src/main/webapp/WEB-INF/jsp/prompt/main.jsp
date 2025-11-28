@@ -64,7 +64,9 @@
                         <div class="ranking-slide slide-center">
                             <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank1.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="<%= imageUrl1 %>" alt="1위">
+                                    <img class="w-full h-48 object-cover"
+                                         src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl1 %>"
+                                         alt="1위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥇</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
                                         조회수 <%= rank1.getViewCount() != null ? rank1.getViewCount() : 0 %>
@@ -85,7 +87,9 @@
                         <div class="ranking-slide slide-right">
                             <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank2.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="<%= imageUrl2 %>" alt="2위">
+                                    <img class="w-full h-48 object-cover"
+                                         src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl2 %>"
+                                         alt="2위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥈</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
                                         조회수 <%= rank2.getViewCount() != null ? rank2.getViewCount() : 0 %>
@@ -106,7 +110,9 @@
                         <div class="ranking-slide slide-left">
                             <div class="relative bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform duration-300 ease-out hover:scale-105" onclick="location.href='${pageContext.request.contextPath}/prompt/detail?id=<%= rank3.getId() %>'">
                                 <div class="relative">
-                                    <img class="w-full h-48 object-cover" src="<%= imageUrl3 %>" alt="3위">
+                                    <img class="w-full h-48 object-cover"
+                                         src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl3 %>"
+                                         alt="3위">
                                     <span class="absolute top-3 left-3 bg-white bg-opacity-80 backdrop-blur-sm text-gray-800 text-xl font-bold px-3 py-1 rounded-md">🥉</span>
                                     <div class="absolute top-3 right-3 bg-black/40 text-white text-xs px-2 py-1 rounded-full">
                                         조회수 <%= rank3.getViewCount() != null ? rank3.getViewCount() : 0 %>
@@ -166,7 +172,9 @@
                         
                         <div class="relative h-48 w-full">
                             <% if (imageUrl != null && !imageUrl.isEmpty()) { %>
-                                <img class="w-full h-48 object-cover" src="<%= imageUrl %>" alt="<%= title %>">
+                            <img class="w-full h-48 object-cover"
+                                 src="${pageContext.request.contextPath}/file/image?name=<%= imageUrl %>"
+                                 alt="<%= title %>">
                             <% } else { %>
                                 <div class="w-full h-full <%= randomColor %> flex items-center justify-center text-4xl text-gray-400">
                                     📷
