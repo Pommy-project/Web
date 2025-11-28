@@ -2,11 +2,6 @@
 <%@ page import="java.util.List" %>
 <%@ page import="com.pommy.model.User" %>
 <%
-    if (session.getAttribute("nickname") == null) {
-        response.sendRedirect(request.getContextPath() + "/auth/login");
-        return;
-    }
-
     User user = (User) request.getAttribute("user");
     if (user == null) {
         response.sendRedirect(request.getContextPath() + "/mypage");

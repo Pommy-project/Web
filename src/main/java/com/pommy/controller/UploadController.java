@@ -58,11 +58,6 @@ public class UploadController extends HttpServlet {
      */
     private void renderUploadForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
-        }
         request.getRequestDispatcher("/WEB-INF/jsp/prompt/upload.jsp")
                 .forward(request, response);
     }
@@ -72,12 +67,7 @@ public class UploadController extends HttpServlet {
      */
     private void handleUpload(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
-        }
-
+        HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
         String title = request.getParameter("title");
         String description = request.getParameter("description");

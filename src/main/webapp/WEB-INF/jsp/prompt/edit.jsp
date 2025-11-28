@@ -3,11 +3,6 @@
 <%@ page import="com.pommy.model.PromptMeme" %>
 <%@ page import="com.pommy.model.AIType" %>
 <%
-    if (session.getAttribute("userId") == null) {
-        response.sendRedirect(request.getContextPath() + "/auth/login");
-        return;
-    }
-
     PromptMeme promptMeme = (PromptMeme) request.getAttribute("promptMeme");
     if (promptMeme == null) {
         response.sendRedirect(request.getContextPath() + "/mypage");

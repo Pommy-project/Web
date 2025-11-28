@@ -18,6 +18,21 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
+    <!-- 인증 필터 설정 -->
+    <filter>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.pommy.filter.AuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- 세션 타임아웃 설정 (30분) -->
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
     <!-- JSP 설정 -->
     <jsp-config>
         <jsp-property-group>

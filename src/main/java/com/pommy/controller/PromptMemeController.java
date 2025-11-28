@@ -66,13 +66,7 @@ public class PromptMemeController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String path = request.getPathInfo();
-        HttpSession session = request.getSession(false);
-
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "로그인이 필요합니다.");
-            return;
-        }
-
+        HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
 
         if (path != null && path.equals("/delete")) {
@@ -203,12 +197,7 @@ public class PromptMemeController extends HttpServlet {
      */
     private void renderEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
-        }
-
+        HttpSession session = request.getSession();
         String idStr = request.getParameter("id");
         if (idStr == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID가 필요합니다.");

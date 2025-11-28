@@ -63,12 +63,7 @@ public class MypageController extends HttpServlet {
     private void renderMypage(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
-                response.sendRedirect(request.getContextPath() + "/auth/login");
-                return;
-            }
-
+            HttpSession session = request.getSession();
             Long userId = (Long) session.getAttribute("userId");
             String nickname = (String) session.getAttribute("nickname");
 
@@ -102,12 +97,7 @@ public class MypageController extends HttpServlet {
     private void renderEditForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
-                response.sendRedirect(request.getContextPath() + "/auth/login");
-                return;
-            }
-
+            HttpSession session = request.getSession();
             Long userId = (Long) session.getAttribute("userId");
             User user = userService.getUserById(userId);
             if (user == null) {
@@ -129,12 +119,7 @@ public class MypageController extends HttpServlet {
      */
     private void handleProfileUpdate(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("userId") == null) {
-            response.sendRedirect(request.getContextPath() + "/auth/login");
-            return;
-        }
-
+        HttpSession session = request.getSession();
         Long userId = (Long) session.getAttribute("userId");
         try {
             User user = userService.getUserById(userId);
