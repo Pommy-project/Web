@@ -109,17 +109,7 @@ VALUES
     0
 ),
 
--- 4. 에버스카이스 스타일 도트 캐릭터
-(
-    1,
-    '에버스카이스풍 도트 캐릭터 제작',
-    '첨부된 인물의 헤어스타일과 의상을 그대로 유지한 채, Everskies의 도트풍 전신 캐릭터 일러스트를 생성하는 프롬프트.',
-    'study the pixel art style of everskies,and imitate the way it depicts body shape,facial features and expressions,clothing,and hair style.using the hairstyle,outfit and accessories of the person in the attached image,creat a full body chracter illustration.the background should be transparent(png),and only the complete character should be included. The character would be full size. Shouldn\'t be cropped or cut on the bottom and top(there should be a little gap. white color in character shouldn\'t be png color. Should be colored',
-    'dot_meme.png',
-    NULL,
-    'GEMINI',
-    0
-),
+
 
 -- 5. PVC 피규어 스타일 변환
 (
